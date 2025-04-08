@@ -3,8 +3,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo/features/todo/domain/entities/todo_entity.dart';
 import 'package:todo/features/todo/presentation/bloc/todo_bloc.dart';
 
-class TodoPage extends StatelessWidget {
+enum Filter { all, completed, incomplete }
+
+class TodoPage extends StatefulWidget {
   const TodoPage({super.key});
+
+  @override
+  State<TodoPage> createState() => _TodoPageState();
+}
+
+class _TodoPageState extends State<TodoPage> {
+  Filter _selectedFilter = Filter.all;
+  bool _sortAscending = true;
 
   void _showAddTodoDialog(BuildContext context) {
     final titleController = TextEditingController();
@@ -53,38 +63,91 @@ class TodoPage extends StatelessWidget {
     );
   }
 
+  List<TodoEntity> _applyFiltersAndSorting(List<TodoEntity> todos) {
+    List<TodoEntity> filtered;
+    switch (_selectedFilter) {
+      case Filter.completed:
+        filtered = todos.where((todo) => todo.isDone).toList();
+        break;
+      case Filter.incomplete:
+        filtered = todos.where((todo) => !todo.isDone).toList();
+        break;
+      default:
+        filtered = List.from(todos);
+    }
+    filtered.sort(
+      (a, b) =>
+          _sortAscending
+              ? a.title.compareTo(b.title)
+              : b.title.compareTo(a.title),
+    );
+    return filtered;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Todo List')),
+      appBar: AppBar(
+        title: const Text('Todo List'),
+        actions: <Widget>[
+          PopupMenuButton<Filter>(
+            onSelected: (value) => setState(() => _selectedFilter = value),
+            itemBuilder:
+                (_) => [
+                  const PopupMenuItem(value: Filter.all, child: Text('All')),
+                  const PopupMenuItem(
+                    value: Filter.completed,
+                    child: Text('Complete'),
+                  ),
+                  const PopupMenuItem(
+                    value: Filter.incomplete,
+                    child: Text('Incomplete'),
+                  ),
+                ],
+          ),
+          IconButton(
+            onPressed: () => setState(() => _sortAscending = !_sortAscending),
+            icon: Icon(_sortAscending ? Icons.sort_by_alpha : Icons.sort),
+          ),
+        ],
+      ),
       body: BlocBuilder<TodoBloc, TodoState>(
         builder: (context, state) {
           if (state is TodoLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is TodoLoaded) {
-            if (state.todos.isEmpty) {
+            final todos = _applyFiltersAndSorting(state.todos);
+            if (todos.isEmpty) {
               return const Center(child: Text('No Todos yet'));
             }
             return ListView.builder(
-              itemCount: state.todos.length,
+              itemCount: todos.length,
               itemBuilder: (_, index) {
-                final todo = state.todos[index];
-                return ListTile(
-                  title: Text(todo.title),
-                  subtitle: Text(todo.description),
-                  leading: Checkbox(
-                    value: todo.isDone,
-                    onChanged: (_) {
-                      context.read<TodoBloc>().add(
-                        UpdateTodoEvent(todo.copyWith(isDone: !todo.isDone)),
-                      );
-                    },
+                final todo = todos[index];
+                return Dismissible(
+                  key: Key(todo.id.toString()),
+                  direction: DismissDirection.endToStart,
+                  background: Container(
+                    color: Colors.red,
+                    alignment: Alignment.centerRight,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: const Icon(Icons.delete, color: Colors.white),
                   ),
-                  trailing: IconButton(
-                    onPressed: () {
-                      context.read<TodoBloc>().add(DeleteTodoEvent(todo.id!));
-                    },
-                    icon: const Icon(Icons.delete),
+                  onDismissed:
+                      (_) => context.read<TodoBloc>().add(
+                        DeleteTodoEvent(todo.id!),
+                      ),
+                  child: ListTile(
+                    title: Text(todo.title),
+                    subtitle: Text(todo.description),
+                    leading: Checkbox(
+                      value: todo.isDone,
+                      onChanged: (_) {
+                        context.read<TodoBloc>().add(
+                          UpdateTodoEvent(todo.copyWith(isDone: !todo.isDone)),
+                        );
+                      },
+                    ),
                   ),
                 );
               },
