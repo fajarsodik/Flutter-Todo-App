@@ -4,6 +4,13 @@ import 'package:todo/features/intro/data/datasources/intro_local_datasource.dart
 import 'package:todo/features/intro/data/intro_repository_impl.dart';
 import 'package:todo/features/intro/presentation/bloc/intro_bloc.dart';
 import 'package:todo/features/intro/presentation/pages/intro_page.dart';
+import 'package:todo/features/todo/data/datasources/todo_local_datasources.dart';
+import 'package:todo/features/todo/data/repositories/todo_repository_impl.dart';
+import 'package:todo/features/todo/domain/usecases/add_todo.dart';
+import 'package:todo/features/todo/domain/usecases/delete_todo.dart';
+import 'package:todo/features/todo/domain/usecases/get_todos.dart';
+import 'package:todo/features/todo/domain/usecases/update_todo.dart';
+import 'package:todo/features/todo/presentation/bloc/todo_bloc.dart';
 import 'package:todo/features/todo/presentation/pages/todo_page.dart';
 
 void main() {
@@ -17,8 +24,23 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final introRepository = IntroRepositoryImpl(IntroLocalDatasource());
-    return BlocProvider(
-      create: (_) => IntroBloc(introRepository)..add(CheckFirstLaunchEvent()),
+    final todoRepository = TodoRepositoryImpl(TodoLocalDatasources());
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create:
+              (_) => IntroBloc(introRepository)..add(CheckFirstLaunchEvent()),
+        ),
+        BlocProvider(
+          create:
+              (_) => TodoBloc(
+                getTodos: GetTodos(todoRepository),
+                addTodo: AddTodo(todoRepository),
+                updateTodo: UpdateTodo(todoRepository),
+                deleteTodo: DeleteTodo(todoRepository),
+              )..add(LoadTodosEvent()),
+        ),
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         home: BlocBuilder<IntroBloc, IntroState>(
