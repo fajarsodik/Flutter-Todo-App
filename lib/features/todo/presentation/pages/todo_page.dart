@@ -15,6 +15,7 @@ class TodoPage extends StatefulWidget {
 class _TodoPageState extends State<TodoPage> {
   Filter _selectedFilter = Filter.all;
   bool _sortAscending = true;
+  bool _sortByDate = false;
 
   void _showAddTodoDialog(BuildContext context) {
     final titleController = TextEditingController();

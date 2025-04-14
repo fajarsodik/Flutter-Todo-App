@@ -32,3 +32,10 @@ class DeleteTodoEvent extends TodoEvent {
   @override
   List<Object> get props => [id];
 }
+
+class FetchTodosEvent extends TodoEvent {
+  final int page;
+  final int limit;
+
+  FetchTodosEvent({this.page = 1, this.limit = 10});
+}

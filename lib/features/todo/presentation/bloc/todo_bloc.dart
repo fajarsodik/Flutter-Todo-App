@@ -41,5 +41,19 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
       await deleteTodo(event.id);
       add(LoadTodosEvent());
     });
+
+    on<FetchTodosEvent>((event, emit) async {
+      try {
+        if (state is TodosLoaded && event.page > 1) {
+          emit(TodosLoadingMore((state as TodosLoaded).todos));
+        } else {
+          emit(TodosLoading());
+        }
+
+        final todos = await repository
+      } catch (e) {
+        emit(TodosError(e.toString()));
+      }
+    });
   }
 }

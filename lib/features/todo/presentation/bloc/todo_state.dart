@@ -28,3 +28,35 @@ class TodoError extends TodoState {
   @override
   List<Object> get props => [message];
 }
+
+class TodosLoadingMore extends TodoState {
+  final List<TodoEntity> todos;
+  TodosLoadingMore(this.todos);
+}
+
+class TodosError extends TodoState {
+  final String message;
+  const TodosError(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class TodosLoading extends TodoState {}
+
+class TodosLoaded extends TodoState {
+  final List<TodoEntity> todos;
+  final bool hasMore;
+
+  TodosLoaded({required this.todos, this.hasMore = true});
+
+  TodosLoaded copyWith({List<TodoEntity>? todos, bool? hasMore}) {
+    return TodosLoaded(
+      todos: todos ?? this.todos,
+      hasMore: hasMore ?? this.hasMore,
+    );
+  }
+
+  @override
+  List<Object> get props => [todos, hasMore];
+}
