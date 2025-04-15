@@ -13,6 +13,7 @@ class TodoModel with _$TodoModel {
     @JsonKey(name: 'due_date') required int dueDate,
     required String status,
     @Default(false) bool isDone,
+    @Default(true) bool isSynced,
   }) = _TodoModel;
 
   factory TodoModel.fromJson(Map<String, dynamic> json) =>
@@ -52,6 +53,14 @@ extension TodoModelX on TodoModel {
       isDone: isDone,
     );
   }
+
+  static TodoModel fromEntity(TodoEntity e) => TodoModel(
+    id: e.id,
+    title: e.title,
+    description: e.description,
+    dueDate: e.dueDate,
+    status: e.status,
+  );
 
   // const TodoModel({
   //   int? id,

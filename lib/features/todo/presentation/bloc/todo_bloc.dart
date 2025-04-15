@@ -4,6 +4,7 @@ import 'package:todo/features/todo/domain/entities/todo_entity.dart';
 import 'package:todo/features/todo/domain/usecases/add_todo.dart';
 import 'package:todo/features/todo/domain/usecases/delete_todo.dart';
 import 'package:todo/features/todo/domain/usecases/get_todos.dart';
+import 'package:todo/features/todo/domain/usecases/get_todos_paginated_usecase.dart';
 import 'package:todo/features/todo/domain/usecases/update_todo.dart';
 
 part 'todo_event.dart';
@@ -14,6 +15,7 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
   final AddTodo addTodo;
   final UpdateTodo updateTodo;
   final DeleteTodo deleteTodo;
+  final GetTodosPaginatedUsecase getTodosUseCase;
 
   TodoBloc({
     required this.getTodos,

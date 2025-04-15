@@ -12,6 +12,13 @@ import 'package:todo/features/todo/domain/usecases/get_todos.dart';
 import 'package:todo/features/todo/domain/usecases/update_todo.dart';
 import 'package:todo/features/todo/presentation/bloc/todo_bloc.dart';
 import 'package:todo/features/todo/presentation/pages/todo_page.dart';
+import 'package:workmanager/workmanager.dart';
+
+void callbackDispatcher() {
+  Workmanager().executeTask((task, inputData) async {
+    final container = await initDependency();
+  });
+}
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

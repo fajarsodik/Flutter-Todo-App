@@ -19,7 +19,7 @@ class TodoLocalDatasources {
       version: 1,
       onCreate: (db, version) {
         return db.execute(
-          'CREATE TABLE todos(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, description TEXT, isDone INTEGER)',
+          'CREATE TABLE IF NOT EXISTS todos(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, description TEXT, isDone INTEGER)',
         );
       },
     );
