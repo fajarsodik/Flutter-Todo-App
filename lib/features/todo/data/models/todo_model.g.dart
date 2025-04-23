@@ -13,6 +13,7 @@ _TodoModel _$TodoModelFromJson(Map<String, dynamic> json) => _TodoModel(
   dueDate: (json['due_date'] as num).toInt(),
   status: json['status'] as String,
   isDone: json['isDone'] as bool? ?? false,
+  isSynced: json['isSynced'] as bool? ?? true,
 );
 
 Map<String, dynamic> _$TodoModelToJson(_TodoModel instance) =>
@@ -23,4 +24,5 @@ Map<String, dynamic> _$TodoModelToJson(_TodoModel instance) =>
       'due_date': instance.dueDate,
       'status': instance.status,
       'isDone': instance.isDone,
+      'isSynced': instance.isSynced,
     };

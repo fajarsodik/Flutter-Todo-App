@@ -16,6 +16,9 @@ class _TodoPageState extends State<TodoPage> {
   Filter _selectedFilter = Filter.all;
   bool _sortAscending = true;
   bool _sortByDate = false;
+  String _searchQuery = '';
+
+  final TextEditingController _searchController = TextEditingController();
 
   void _showAddTodoDialog(BuildContext context) {
     final titleController = TextEditingController();

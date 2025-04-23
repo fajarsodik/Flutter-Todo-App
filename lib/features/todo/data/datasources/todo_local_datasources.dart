@@ -25,6 +25,17 @@ class TodoLocalDatasources {
     );
   }
 
+  Future<void> _createTables(Database db, int version) async {
+    await db.execute(
+      'CREATE TABLE IF NOT EXISTS todos(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, description TEXT, isDone INTEGER',
+    );
+    await db.execute('''CREATE TABLE IF NOT EXISTS sync_queue (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      operation TEXT NOT NULL, -- add, update, delete
+      payload TEXT NOT NULL    -- todo as JSON string
+      );''');
+  }
+
   Future<List<TodoModel>> getTodos() async {
     final db = await database;
     final result = await db.query('todos');

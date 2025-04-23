@@ -17,6 +17,11 @@ class TodoBloc extends Bloc<TodoEvent, TodoState> {
   final DeleteTodo deleteTodo;
   final GetTodosPaginatedUsecase getTodosUseCase;
 
+  int currentPage = 1;
+  bool _hasMore = true;
+  bool _isFetching = false;
+  List<TodoEntity> _cachedTodos = [];
+
   TodoBloc({
     required this.getTodos,
     required this.addTodo,
